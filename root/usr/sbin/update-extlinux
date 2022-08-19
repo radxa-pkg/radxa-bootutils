@@ -13,8 +13,8 @@ VERSION="$2"
 # Update extlinux.conf
 
 case $ACTION in
-  configure|remove|'') : ;;
-  *) exit ;;
+    configure|remove|'') : ;;
+    *) exit ;;
 esac
 
 if ! source /etc/default/extlinux 2>/dev/null
@@ -58,7 +58,7 @@ done < <(linux-version list | linux-version sort --reverse)
 
 if (( ${#FDTOVERLAYS[@]} != 0 ))
 then
-  sed -i "s/#fdtoverlays/fdtoverlays/g" /boot/extlinux/extlinux.conf.new
+    sed -i "s/#fdtoverlays/fdtoverlays/g" /boot/extlinux/extlinux.conf.new
 fi
 
 mv /boot/extlinux/extlinux.conf.new /boot/extlinux/extlinux.conf

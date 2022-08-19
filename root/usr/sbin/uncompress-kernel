@@ -13,13 +13,12 @@ VERSION="$2"
 # Workaround Rockchip U-Boot issue where they cannot load gzip compressed kernel image
 
 case $ACTION in
-  configure|'') : ;;
-  *) exit ;;
+    configure|'')
+        if file "$IMAGE" | grep -qi "gzip"
+        then
+            echo "Decompressing $IMAGE ..."
+            mv "$IMAGE" "$IMAGE.gz"
+            gunzip "$IMAGE.gz"
+        fi
+        ;;
 esac
-
-if file "$IMAGE" | grep -qi "gzip"
-then
-    echo "Decompressing $IMAGE ..."
-    mv "$IMAGE" "$IMAGE.gz"
-    gunzip "$IMAGE.gz"
-fi

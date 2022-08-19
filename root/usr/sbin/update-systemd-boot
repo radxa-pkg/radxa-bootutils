@@ -12,29 +12,22 @@ VERSION="$2"
 
 # Update EFI boot entries for systemd-boot
 
-case $ACTION in
-  configure|remove|'') : ;;
-  *) exit ;;
-esac
-
 if ! command -v efibootmgr >/dev/null
 then
     exit
 fi
 
-echo "Updating /boot/efi/$(cat /etc/machine-id) ..."
-
-case "$MODE" in
-    postinst.d)
+case $ACTION in
+    configure)
+        echo "Updating EFI entry for $ABI ..."
         if [[ -z "$IMAGE" ]]
         then
             IMAGE="$(ls /boot/vmlinu*-$ABI)"
         fi
         kernel-install add "$ABI" "$IMAGE"
         ;;
-    postrm.d)
+    remove)
+        echo "Removing EFI entry for $ABI ..."
         kernel-install remove "$ABI"
-        ;;
-    sbin)
         ;;
 esac
