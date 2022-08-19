@@ -1,0 +1,31 @@
+#!/bin/bash
+set -eo pipefail
+
+MODE="$(basename "$(dirname "$0")")"
+ABI="$1"
+IMAGE="$2"
+
+exec </dev/null >&2
+eval set -- "$DEB_MAINT_PARAMS"
+
+# Update EFI boot entries for systemd-boot
+
+if ! command -v efibootmgr >/dev/null
+then
+    exit
+fi
+
+case "$MODE" in
+    postinst.d)
+        if [[ -z "$IMAGE" ]]
+        then
+            IMAGE="$(ls /boot/vmlinu*-$ABI)"
+        fi
+        kernel-install add "$ABI" "$IMAGE"
+        ;;
+    postrm.d)
+        kernel-install remove "$ABI"
+        ;;
+    sbin)
+        ;;
+esac

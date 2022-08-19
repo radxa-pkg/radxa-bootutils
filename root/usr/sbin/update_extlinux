@@ -1,72 +1,57 @@
 #!/bin/bash
-
-emit_kernel() {
-  local VERSION="$1"
-  local APPEND="$2"
-  local NAME="$3"
-
-  echo "label kernel-$VERSION$NAME"
-  echo "    kernel /boot/vmlinuz-$VERSION"
-
-  if [[ -f "/etc/kernel/cmdline" ]]; then
-    if [[ -f "/boot/initrd.img-$VERSION" ]]; then
-      echo "    initrd /boot/initrd.img-$VERSION"
-    fi
-  fi
-
-  if [[ ! -d "/boot/dtbs/$VERSION" ]]; then
-    mkdir -p /boot/dtbs
-    cp -au "/usr/lib/linux-image-$VERSION" "/boot/dtbs/$VERSION"
-  fi
-  echo "    devicetreedir /boot/dtbs/$VERSION"
-
-  if [[ -n "$FDTOVERLAYS" ]]
-  then
-    echo "    fdtoverlays $FDTOVERLAYS"
-  else
-    echo "    #fdtoverlays"
-  fi
-
-  echo "    append $APPEND"
-}
-
-TIMEOUT=""
-DEFAULT=""
-APPEND=""
-FDTOVERLAYS=""
-
 set -eo pipefail
 
-. /etc/default/extlinux
+MODE="$(basename "$(dirname "$0")")"
+ABI="$1"
+IMAGE="$2"
 
-if [[ -f "/etc/kernel/cmdline" ]]
+exec </dev/null >&2
+eval set -- "$DEB_MAINT_PARAMS"
+
+# Update extlinux.conf
+
+if ! source /etc/default/extlinux 2>/dev/null
 then
-    APPEND="$APPEND $(cat /etc/kernel/cmdline)"
+    exit
 fi
 
-if [[ -f "/etc/default/console" ]]
-then
-    APPEND="$APPEND $(cat /etc/default/console)"
-fi
-
-echo "Kernel configuration : $APPEND" 1>&2
-echo ""
-
-echo "Creating new extlinux.conf..." 1>&2
+TIMEOUT=${TIMEOUT:-3}
+APPEND="$(cat /etc/kernel/cmdline)${APPEND:+ $APPEND}"
 
 mkdir -p /boot/extlinux/
-exec 1> /boot/extlinux/extlinux.conf.new
+cat << EOF > /boot/extlinux/extlinux.conf.new
+timeout $TIMEOUT
+menu title Radxa Boot Selection"
+#default $DEFAULT
 
-echo "timeout ${TIMEOUT:-10}"
-echo "menu title Radxa Boot Selection"
-[[ -n "$DEFAULT" ]] && echo "default $DEFAULT"
-echo ""
-rm -rf /boot/dtbs
-linux-version list | linux-version sort --reverse | while read VERSION; do
-  emit_kernel "$VERSION" "$APPEND"
-done
+EOF
 
-exec 1<&-
+if [[ -n "$DEFAULT" ]]
+then
+  sed -i "s/^#default/default/" /boot/extlinux/extlinux.conf.new
+fi
 
-echo "Installing new extlinux.conf..." 1>&2
+mkdir -p /boot/dtbs.new
+
+while read
+do
+  cp -au "/usr/lib/linux-image-$REPLY" "/boot/dtbs.new/$REPLY"
+  cat << EOF >> /boot/extlinux/extlinux.conf.new
+label $REPLY
+    kernel /boot/vmlinuz-$REPLY
+    initrd /boot/initrd.img-$REPLY
+    devicetreedir /boot/dtbs/$VERSION
+    #fdtoverlays $(TEMP=("${FDTOVERLAYS[@]/#/\/boot\/dtbs\/$VERSION\/}") echo "${TEMP[*]}")
+    append $APPEND
+
+EOF
+done < <(linux-version list | linux-version sort --reverse)
+
+if (( ${#FDTOVERLAYS[@]} != 0 ))
+then
+  sed -i "s/#fdtoverlays/fdtoverlays/g" /boot/extlinux/extlinux.conf.new
+fi
+
 mv /boot/extlinux/extlinux.conf.new /boot/extlinux/extlinux.conf
+rm -rf /boot/dtbs
+mv /boot/dtbs.new /boot/dtbs

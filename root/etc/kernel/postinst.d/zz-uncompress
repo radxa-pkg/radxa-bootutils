@@ -1,9 +1,18 @@
-#!/bin/sh -e
+#!/bin/bash
+set -eo pipefail
 
-version="$1"
+MODE="$(basename "$(dirname "$0")")"
+ABI="$1"
+IMAGE="$2"
 
-if file /boot/vmlinuz-$version | grep -qi "gzip"
+exec </dev/null >&2
+eval set -- "$DEB_MAINT_PARAMS"
+
+# Workaround Rockchip U-Boot issue
+# where they cannot load gzip compressed kernel image
+
+if file /boot/vmlinuz-$ABI | grep -qi "gzip"
 then
-    mv /boot/vmlinuz-$version /boot/vmlinuz-$version.gz
-    gunzip /boot/vmlinuz-$version.gz
+    mv /boot/vmlinuz-$ABI /boot/vmlinuz-$ABI.gz
+    gunzip /boot/vmlinuz-$ABI.gz
 fi
