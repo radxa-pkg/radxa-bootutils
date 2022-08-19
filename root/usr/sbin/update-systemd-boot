@@ -7,13 +7,22 @@ IMAGE="$2"
 
 exec </dev/null >&2
 eval set -- "$DEB_MAINT_PARAMS"
+ACTION="$1"
+VERSION="$2"
 
 # Update EFI boot entries for systemd-boot
+
+case $ACTION in
+  configure|'') : ;;
+  *) exit ;;
+esac
 
 if ! command -v efibootmgr >/dev/null
 then
     exit
 fi
+
+echo "Updating /boot/efi/$(cat /etc/machine-id) ..."
 
 case "$MODE" in
     postinst.d)

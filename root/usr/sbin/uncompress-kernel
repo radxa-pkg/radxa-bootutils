@@ -1,0 +1,25 @@
+#!/bin/bash
+set -eo pipefail
+
+MODE="$(basename "$(dirname "$0")")"
+ABI="$1"
+IMAGE="$2"
+
+exec </dev/null >&2
+eval set -- "$DEB_MAINT_PARAMS"
+ACTION="$1"
+VERSION="$2"
+
+# Workaround Rockchip U-Boot issue where they cannot load gzip compressed kernel image
+
+case $ACTION in
+  configure|'') : ;;
+  *) exit ;;
+esac
+
+if file "$IMAGE" | grep -qi "gzip"
+then
+    echo "Decompressing $IMAGE ..."
+    mv "$IMAGE" "$IMAGE.gz"
+    gunzip "$IMAGE.gz"
+fi

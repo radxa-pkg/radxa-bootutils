@@ -7,13 +7,22 @@ IMAGE="$2"
 
 exec </dev/null >&2
 eval set -- "$DEB_MAINT_PARAMS"
+ACTION="$1"
+VERSION="$2"
 
 # Update extlinux.conf
+
+case $ACTION in
+  configure|'') : ;;
+  *) exit ;;
+esac
 
 if ! source /etc/default/extlinux 2>/dev/null
 then
     exit
 fi
+
+echo "Updating /boot/extlinux/extlinux.conf ..."
 
 TIMEOUT=${TIMEOUT:-3}
 APPEND="$(cat /etc/kernel/cmdline)${APPEND:+ $APPEND}"
