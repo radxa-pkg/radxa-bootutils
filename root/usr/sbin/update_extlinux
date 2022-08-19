@@ -40,8 +40,8 @@ do
 label $REPLY
     kernel /boot/vmlinuz-$REPLY
     initrd /boot/initrd.img-$REPLY
-    devicetreedir /boot/dtbs/$VERSION
-    #fdtoverlays $(TEMP=("${FDTOVERLAYS[@]/#/\/boot\/dtbs\/$VERSION\/}") echo "${TEMP[*]}")
+    devicetreedir /boot/dtbs/$REPLY
+    #fdtoverlays $(TEMP=("${FDTOVERLAYS[@]/#/\/boot\/dtbs\/$REPLY\/}") echo "${TEMP[*]}")
     append $APPEND
 
 EOF
