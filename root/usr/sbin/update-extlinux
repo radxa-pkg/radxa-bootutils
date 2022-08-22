@@ -37,15 +37,15 @@ EOF
 
 if [[ -n "$DEFAULT" ]]
 then
-  sed -i "s/^#default/default/" /boot/extlinux/extlinux.conf.new
+    sed -i "s/^#default/default/" /boot/extlinux/extlinux.conf.new
 fi
 
 mkdir -p /boot/dtbs.new
 
 while read
 do
-  cp -au "/usr/lib/linux-image-$REPLY" "/boot/dtbs.new/$REPLY"
-  cat << EOF >> /boot/extlinux/extlinux.conf.new
+    cp -au "/usr/lib/linux-image-$REPLY" "/boot/dtbs.new/$REPLY"
+    cat << EOF >> /boot/extlinux/extlinux.conf.new
 label $REPLY
     kernel /boot/vmlinuz-$REPLY
     initrd /boot/initrd.img-$REPLY
