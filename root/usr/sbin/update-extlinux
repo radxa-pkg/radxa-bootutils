@@ -24,13 +24,13 @@ fi
 
 echo "Updating /boot/extlinux/extlinux.conf ..."
 
-TIMEOUT=${TIMEOUT:-3}
+TIMEOUT=${TIMEOUT:-10}
 APPEND="$(cat /etc/kernel/cmdline)${APPEND:+ $APPEND}"
 
 mkdir -p /boot/extlinux/
 cat << EOF > /boot/extlinux/extlinux.conf.new
-timeout $TIMEOUT
 menu title Radxa Boot Selection
+timeout $TIMEOUT
 #default $DEFAULT
 
 EOF
