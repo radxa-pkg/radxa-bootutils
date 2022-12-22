@@ -4,14 +4,14 @@ set -euo pipefail
 # shellcheck disable=SC2034
 MODE="$(basename "$(dirname "$0")")"
 # shellcheck disable=SC2034
-ABI="$1"
-IMAGE="$2"
+ABI="${1:-}"
+IMAGE="${2:-}"
 
 exec </dev/null >&2
 eval set -- "$DEB_MAINT_PARAMS"
-ACTION="$1"
+ACTION="${1:-}"
 # shellcheck disable=SC2034
-VERSION="$2"
+VERSION="${2:-}"
 
 # Workaround Rockchip U-Boot issue where they cannot load gzip compressed kernel image
 
