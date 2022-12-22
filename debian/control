@@ -1,0 +1,18 @@
+Source: radxa-bootutils
+Maintainer: "Radxa Computer Co., Ltd" <dev@radxa.com>
+Section: misc
+Priority: optional
+Standards-Version: 4.6.0
+Build-Depends: debhelper (>=12~),
+               devscripts,
+               lintian,
+               pandoc,
+               shellcheck,
+
+Package: radxa-bootutils
+Architecture: all
+Section: misc
+Priority: optional
+Depends: ${misc:Depends},
+Description: Radxa boot utilties
+ A collection of scripts to support system booting.

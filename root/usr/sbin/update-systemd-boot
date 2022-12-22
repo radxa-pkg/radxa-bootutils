@@ -1,6 +1,7 @@
 #!/bin/bash
-set -eo pipefail
+set -euo pipefail
 
+# shellcheck disable=SC2034
 MODE="$(basename "$(dirname "$0")")"
 ABI="$1"
 IMAGE="$2"
@@ -8,6 +9,7 @@ IMAGE="$2"
 exec </dev/null >&2
 eval set -- "$DEB_MAINT_PARAMS"
 ACTION="$1"
+# shellcheck disable=SC2034
 VERSION="$2"
 
 # Update EFI boot entries for systemd-boot
@@ -22,7 +24,8 @@ case $ACTION in
         echo "Updating EFI entry for $ABI ..."
         if [[ -z "$IMAGE" ]]
         then
-            IMAGE="$(ls /boot/vmlinu*-$ABI)"
+            KERNELS=(/boot/vmlinu*-"$ABI")
+            IMAGE="${KERNELS[0]}"
         fi
         kernel-install add "$ABI" "$IMAGE"
         ;;

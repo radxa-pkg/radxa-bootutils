@@ -1,0 +1,7 @@
+/.debhelper
+/debhelper-build-stamp
+/files
+/radxa-bootutils
+/*.debhelper.log
+/*.postrm.debhelper
+/*.substvars
