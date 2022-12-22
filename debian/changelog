@@ -1,3 +1,9 @@
+radxa-bootutils (0.2.1) stable; urgency=medium
+
+  * Fix unbound variable error
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Thu, 22 Dec 2022 19:34:42 +0800
+
 radxa-bootutils (0.2.0) stable; urgency=medium
 
   * First release in Debian package format
