@@ -30,11 +30,11 @@ fi
 
 PRODUCT="$(get_product_id)"
 
-if [[ -z $PRODUCT ]]
+if [[ -z "$PRODUCT" ]]
 then
-    echo "Unable to detect current running product model." >&2
-    echo "No overlay will be configured." >&2
-    exit 1
+    echo "Warning: Unable to detect current running product model." >&2
+    echo "Warning: No overlay will be configured." >&2
+    exit
 fi
 
 #MACHINE_ID="$KERNEL_INSTALL_MACHINE_ID"
@@ -52,9 +52,9 @@ DTB=$(find "/usr/lib/linux-image-$KERNEL_VERSION/" -name "*${PRODUCT}.dtb")
 
 if [[ -z $DTB ]]
 then
-    echo "Unable to find device tree blob for $PRODUCT." >&2
-    echo "No overlay will be configured." >&2
-    exit 1
+    echo "Warning: Unable to find device tree blob for '$PRODUCT'." >&2
+    echo "Warning: No overlay will be configured." >&2
+    exit
 else
     cp "$DTB" "$ENTRY_DIR_ABS"
     DTB="$ENTRY_DIR/$(basename "$DTB")"
@@ -80,10 +80,16 @@ else
     LOADER_ENTRY="$BOOT_ROOT/loader/entries/$ENTRY_TOKEN-$KERNEL_VERSION.conf"
 fi
 
+if [[ ! -f "$LOADER_ENTRY" ]]
+then
+    echo "Error: Loader entry '$LOADER_ENTRY' does not exist.." >&2
+    exit 1
+fi
+
 {
     echo "devicetree $DTB"
     echo "devicetree-overlay ${DTBO[*]}"
-} >"$LOADER_ENTRY" || {
-    echo "Error: could not create loader entry '$LOADER_ENTRY'." >&2
+} >> "$LOADER_ENTRY" || {
+    echo "Error: Could not update loader entry '$LOADER_ENTRY'." >&2
     exit 1
 }
