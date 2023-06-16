@@ -12,7 +12,7 @@ all: build
 #
 .PHONY: test
 test:
-	find ./root/usr/sbin -type f -exec shellcheck --source-path=./root/usr/sbin --external-sources {} +
+	find ./root/usr/ -type f -exec shellcheck --source-path=./root/usr/sbin --external-sources {} +
 
 #
 # Build

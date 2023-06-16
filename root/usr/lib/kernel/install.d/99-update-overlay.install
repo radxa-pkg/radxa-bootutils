@@ -1,0 +1,89 @@
+#!/bin/bash
+set -euo pipefail
+shopt -s nullglob
+
+get_product_id() {
+    if [[ ! -f /proc/device-tree/compatible ]]
+    then
+        return
+    fi
+
+    local model
+    model="$(tr $"\0" $"\n" < /proc/device-tree/compatible | head -n 1 | cut -d "," -f 2)"
+    if [[ $model =~ ^rock ]]
+    then
+        echo "$model"
+    else
+        echo "radxa-$model"
+    fi
+}
+
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
+ENTRY_DIR_ABS="${3:?}"
+#KERNEL_IMAGE="${4:?}"
+
+if [[ "$COMMAND" != "add" ]]
+then
+    exit
+fi
+
+PRODUCT="$(get_product_id)"
+
+if [[ -z $PRODUCT ]]
+then
+    echo "Unable to detect current running product model." >&2
+    echo "No overlay will be configured." >&2
+    exit 1
+fi
+
+#MACHINE_ID="$KERNEL_INSTALL_MACHINE_ID"
+ENTRY_TOKEN="${KERNEL_INSTALL_ENTRY_TOKEN:-}"
+BOOT_ROOT="${KERNEL_INSTALL_BOOT_ROOT:-}"
+
+BOOT_MNT="$(stat -c %m "$BOOT_ROOT")"
+if [ "$BOOT_MNT" = '/' ]; then
+    ENTRY_DIR="$ENTRY_DIR_ABS"
+else
+    ENTRY_DIR="${ENTRY_DIR_ABS#"$BOOT_MNT"}"
+fi
+
+DTB=$(find "/usr/lib/linux-image-$KERNEL_VERSION/" -name "*${PRODUCT}.dtb")
+
+if [[ -z $DTB ]]
+then
+    echo "Unable to find device tree blob for $PRODUCT." >&2
+    echo "No overlay will be configured." >&2
+    exit 1
+else
+    cp "$DTB" "$ENTRY_DIR_ABS"
+    DTB="$ENTRY_DIR/$(basename "$DTB")"
+fi
+
+DTBO=()
+for i in /boot/dtbo/*.dtb
+do
+    cp "$i" "$ENTRY_DIR_ABS"
+    DTBO+=("$ENTRY_DIR/$(basename "$i")")
+done
+
+TRIES_FILE="${KERNEL_INSTALL_CONF_ROOT:-/etc/kernel}/tries"
+
+if [ -f "$TRIES_FILE" ]; then
+    read -r TRIES <"$TRIES_FILE"
+    if ! echo "$TRIES" | grep -q '^[0-9][0-9]*$'; then
+        echo "$TRIES_FILE does not contain an integer." >&2
+        exit 1
+    fi
+    LOADER_ENTRY="$BOOT_ROOT/loader/entries/$ENTRY_TOKEN-$KERNEL_VERSION+$TRIES.conf"
+else
+    LOADER_ENTRY="$BOOT_ROOT/loader/entries/$ENTRY_TOKEN-$KERNEL_VERSION.conf"
+fi
+
+{
+    echo "devicetree $DTB"
+    echo "devicetree-overlay ${DTBO[*]}"
+} >"$LOADER_ENTRY" || {
+    echo "Error: could not create loader entry '$LOADER_ENTRY'." >&2
+    exit 1
+}
