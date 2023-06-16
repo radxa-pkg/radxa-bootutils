@@ -67,7 +67,7 @@ clean-deb:
 #
 .PHONY: dch
 dch: debian/changelog
-	gbp dch --debian-branch=main
+	EDITOR=true gbp dch --commit --debian-branch=main --release --dch-opt=--upstream
 
 .PHONY: deb
 deb: debian
