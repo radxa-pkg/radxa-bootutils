@@ -1,3 +1,14 @@
+radxa-bootutils (0.2.2) jammy; urgency=medium
+
+  [ ZHANG Yuntian ]
+  * Update CI
+  * Do not create source package
+  * Remove feature provided by systemd-boot
+  * Add kernel-install plugin to manage overlays
+  * Update CI
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 16 Jun 2023 07:34:10 +0000
+
 radxa-bootutils (0.2.1) stable; urgency=medium
 
   * Fix unbound variable error
