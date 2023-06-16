@@ -1,3 +1,11 @@
+radxa-bootutils (0.2.3) jammy; urgency=medium
+
+  [ ZHANG Yuntian ]
+  * Update CI
+  * Do not block kernel install
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 16 Jun 2023 09:15:13 +0000
+
 radxa-bootutils (0.2.2) jammy; urgency=medium
 
   [ ZHANG Yuntian ]
