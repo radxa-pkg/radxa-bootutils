@@ -14,6 +14,7 @@ Package: radxa-bootutils
 Architecture: all
 Section: misc
 Priority: optional
-Depends: ${misc:Depends},
+Depends: file,
+         ${misc:Depends},
 Description: Radxa boot utilties
  A collection of scripts to support system booting.
