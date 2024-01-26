@@ -1,3 +1,21 @@
+radxa-bootutils (0.2.4) jammy; urgency=medium
+
+  [ ZHANG Yuntian ]
+  * Only trigger apt update for release
+
+  [ dependabot[bot] ]
+  * Bump actions/checkout from 3 to 4
+
+  [ dependabot[bot] ]
+  * Bump actions/download-artifact from 3 to 4
+
+  [ dependabot[bot] ]
+  * Bump actions/upload-artifact from 3 to 4
+  * fix: use debhelper to create symlinks
+  * fix: add missing runtime dependency
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 26 Jan 2024 12:27:54 +0000
+
 radxa-bootutils (0.2.3) jammy; urgency=medium
 
   [ ZHANG Yuntian ]
