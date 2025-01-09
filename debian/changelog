@@ -1,3 +1,14 @@
+radxa-bootutils (0.2.5) jammy; urgency=medium
+
+  [ dependabot[bot] ]
+  * Bump softprops/action-gh-release from 1 to 2
+
+  [ ZHANG Yuntian ]
+  * fix: bump uncompress-kernel priority
+  * chore: sync release commands
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Thu, 09 Jan 2025 10:49:48 +0000
+
 radxa-bootutils (0.2.4) jammy; urgency=medium
 
   [ ZHANG Yuntian ]
