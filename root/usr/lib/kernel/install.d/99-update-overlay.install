@@ -61,10 +61,9 @@ else
 fi
 
 DTBO=()
-for i in /boot/dtbo/*.dtb
+for i in $ENTRY_DIR_ABS/dtbo/*.dtbo
 do
-    cp "$i" "$ENTRY_DIR_ABS"
-    DTBO+=("$ENTRY_DIR/$(basename "$i")")
+    DTBO+=("$ENTRY_DIR/dtbo/$(basename "$i")")
 done
 
 TRIES_FILE="${KERNEL_INSTALL_CONF_ROOT:-/etc/kernel}/tries"
@@ -88,7 +87,9 @@ fi
 
 {
     echo "devicetree $DTB"
-    echo "devicetree-overlay ${DTBO[*]}"
+    if (( ${#DTBO[@]} > 0 )); then
+        echo "devicetree-overlay ${DTBO[*]}"
+    fi
 } >> "$LOADER_ENTRY" || {
     echo "Error: Could not update loader entry '$LOADER_ENTRY'." >&2
     exit 1
