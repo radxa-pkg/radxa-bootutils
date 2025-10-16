@@ -87,9 +87,7 @@ fi
 
 {
     echo "devicetree $DTB"
-    if (( ${#DTBO[@]} > 0 )); then
-        echo "devicetree-overlay ${DTBO[*]}"
-    fi
+    echo "devicetree-overlay ${DTBO[*]}"
 } >> "$LOADER_ENTRY" || {
     echo "Error: Could not update loader entry '$LOADER_ENTRY'." >&2
     exit 1
