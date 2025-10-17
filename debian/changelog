@@ -1,3 +1,15 @@
+radxa-bootutils (0.2.6) jammy; urgency=medium
+
+  [ Guoguo ]
+  * fix: update device tree overlay path
+  * fix: always echo devicetree-overlay in loader entry update
+  * fix: quote ENTRY_DIR_ABS in device tree overlay loop
+
+  [ ZHANG Yuntian ]
+  * chore: update existing template files
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Fri, 17 Oct 2025 11:16:14 +0000
+
 radxa-bootutils (0.2.5) jammy; urgency=medium
 
   [ dependabot[bot] ]
