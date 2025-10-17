@@ -61,10 +61,9 @@ else
 fi
 
 DTBO=()
-for i in /boot/dtbo/*.dtb
+for i in $ENTRY_DIR_ABS/dtbo/*.dtbo
 do
-    cp "$i" "$ENTRY_DIR_ABS"
-    DTBO+=("$ENTRY_DIR/$(basename "$i")")
+    DTBO+=("$ENTRY_DIR/dtbo/$(basename "$i")")
 done
 
 TRIES_FILE="${KERNEL_INSTALL_CONF_ROOT:-/etc/kernel}/tries"
