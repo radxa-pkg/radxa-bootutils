@@ -61,7 +61,7 @@ else
 fi
 
 DTBO=()
-for i in $ENTRY_DIR_ABS/dtbo/*.dtbo
+for i in "$ENTRY_DIR_ABS/dtbo"/*.dtbo
 do
     DTBO+=("$ENTRY_DIR/dtbo/$(basename "$i")")
 done
