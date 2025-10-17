@@ -1,0 +1,22 @@
+test: shellcheck
+
+.PHONE: shellcheck
+shellcheck:
+	find ./root/usr/ -type f -exec shellcheck --source-path=./root/usr/sbin --external-sources {} +
+
+main_build: build-man
+
+SRC-MAN		:=	man
+SRCS-MAN	:=	$(wildcard $(SRC-MAN)/*.md)
+MANS		:=	$(SRCS-MAN:.md=)
+.PHONY: build-man
+build-man: $(MANS)
+
+$(SRC-MAN)/%: $(SRC-MAN)/%.md
+	pandoc "$<" -o "$@" --from markdown --to man -s
+
+clean: clean-man
+
+.PHONY: clean-man
+clean-man:
+	rm -rf $(MANS)
